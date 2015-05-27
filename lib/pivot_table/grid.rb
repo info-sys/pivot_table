@@ -1,5 +1,6 @@
 module PivotTable
   class Grid
+    include DataAccessor
 
     attr_accessor :source_data, :row_name, :column_name, :value_name, :field_name
     attr_reader :columns, :rows, :data_grid, :configuration, :access_method
@@ -96,16 +97,5 @@ module PivotTable
       configuration.sort ? hdrs.sort : hdrs
     end
 
-    def determine_access_method
-      @access_method = @source_data.first.kind_of?(Hash) ? :hash : :send
-    end
-
-    def access_record(item, key)
-      if access_method == :hash
-        item[key]
-      else
-        item.send(key)
-      end
-    end
   end
 end

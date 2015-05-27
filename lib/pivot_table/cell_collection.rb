@@ -1,5 +1,6 @@
 module PivotTable
   module CellCollection
+    include DataAccessor
 
     ACCESSORS = [:header, :data, :value_name, :orthogonal_headers, :access_method]
 
@@ -23,14 +24,6 @@ module PivotTable
       data[
         orthogonal_headers.find_index{|header| by_header_name.to_s == header.to_s}
       ] rescue nil
-    end
-
-    def access_record(item, key)
-      if access_method == :hash
-        item[key]
-      else
-        item.send(key)
-      end
     end
 
   end
