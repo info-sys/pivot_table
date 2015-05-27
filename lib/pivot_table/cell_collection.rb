@@ -1,7 +1,8 @@
 module PivotTable
   module CellCollection
+    include DataAccessor
 
-    ACCESSORS = [:header, :data, :value_name, :orthogonal_headers]
+    ACCESSORS = [:header, :data, :value_name, :orthogonal_headers, :access_method]
 
     ACCESSORS.each do |a|
       self.send(:attr_accessor, a)
@@ -14,7 +15,7 @@ module PivotTable
     end
 
     def total
-      data.inject(0) { |t, x| t + (x ? x.send(value_name) : 0) }
+      data.inject(0) { |t, x| t + (x ? access_record(x, value_name) : 0) }
     end
 
   private

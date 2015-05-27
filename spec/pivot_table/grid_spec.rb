@@ -23,6 +23,15 @@ module PivotTable
     let(:sorted_data) { [d1, d2, d3, d4, d5, d6] }
     let(:unsorted_data) { [d6, d4, d5, d3, d2, d1] }
 
+    let(:h1) { {id: 1, row_name: 'r1', column_name: 'c1'} }
+    let(:h2) { {id: 2, row_name: 'r1', column_name: 'c2'} }
+    let(:h3) { {id: 3, row_name: 'r1', column_name: 'c3'} }
+    let(:h4) { {id: 4, row_name: 'r2', column_name: 'c1'} }
+    let(:h5) { {id: 5, row_name: 'r2', column_name: 'c2'} }
+    let(:h6) { {id: 6, row_name: 'r2', column_name: 'c3'} }
+
+    let(:hash_data) { [h1, h2, h3, h4, h5, h6] }
+
     let(:instance) do
       described_class.new(config) do |g|
         g.source_data = data
@@ -66,6 +75,26 @@ module PivotTable
       let(:column_totals) { [d1.id + d4.id, d2.id + d5.id, d3.id + d6.id] }
       let(:row_totals) { [d1.id + d2.id + d3.id, d4.id + d5.id + d6.id] }
       let(:grand_total) { d1.id + d2.id + d3.id + d4.id + d5.id + d6.id }
+
+      it_behaves_like 'a collection of columns'
+      it_behaves_like 'a collection of rows'
+      it_behaves_like 'a data grid'
+    end
+
+    context 'when data is an array of hashes' do
+      let(:config) { { :sort => true } }
+      let(:data) { hash_data }
+
+      let(:column_headers) { %w(c1 c2 c3) }
+      let(:row_headers) { %w(r1 r2) }
+      let(:row_0) { [h1, h2, h3] }
+      let(:row_1) { [h4, h5, h6] }
+      let(:column_0) { [h1, h4] }
+      let(:column_1) { [h2, h5] }
+      let(:column_2) { [h3, h6] }
+      let(:column_totals) { [h1[:id] + h4[:id], h2[:id] + h5[:id], h3[:id] + h6[:id]] }
+      let(:row_totals) { [h1[:id] + h2[:id] + h3[:id], h4[:id] + h5[:id] + h6[:id]] }
+      let(:grand_total) { h1[:id] + h2[:id] + h3[:id] + h4[:id] + h5[:id] + h6[:id] }
 
       it_behaves_like 'a collection of columns'
       it_behaves_like 'a collection of rows'

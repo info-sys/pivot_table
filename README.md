@@ -17,7 +17,7 @@ Couldn't be easier...
 
 At the very least, you will need to provide three things to create a pivot table...
 
-* a dataset (this doesn't necessarily have to be an ActiveRecord dataset, but it should at least behave like ActiveRecord e.g. OpenStruct)
+* a dataset (this doesn't necessarily have to be an ActiveRecord dataset, but it should at least behave like ActiveRecord e.g. OpenStruct or be a hash)
 * the method to be used as column names
 * the method to be used as row names
 
@@ -147,6 +147,22 @@ This will give you a logical grid (represented by an two-dimensional array) whic
 
 Compare this to the first example above. It's simpler, if that's what you need.
 
+##### Using hashes instead of OpenStructs
+
+The PivotTable::Grid will behave identically if you use hashes instead of model objects or OpenStructs.
+
+    obj_1 = {city: 'London',   quarter: 'Q1'}
+    obj_2 = {city: 'London',   quarter: 'Q2'}
+    obj_3 = {city: 'London',   quarter: 'Q3'}
+    obj_4 = {city: 'London',   quarter: 'Q4'}
+    obj_5 = {city: 'New York', quarter: 'Q1'}
+    obj_6 = {city: 'New York', quarter: 'Q2'}
+    obj_7 = {city: 'New York', quarter: 'Q3'}
+    obj_8 = {city: 'New York', quarter: 'Q4'}
+
+    data = [ obj_1, obj_2, obj_3, obj_4, obj_5, obj_6, obj_7, obj_8 ]
+
+The `column_name`, `row_name` and other options will be used as hash keys rather than method names.
 
 #### Configuration Options
 

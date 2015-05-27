@@ -1,8 +1,9 @@
 module PivotTable
   class Grid
+    include DataAccessor
 
     attr_accessor :source_data, :row_name, :column_name, :value_name, :field_name
-    attr_reader :columns, :rows, :data_grid, :configuration
+    attr_reader :columns, :rows, :data_grid, :configuration, :access_method
 
     DEFAULT_OPTIONS = {
       :sort => true
@@ -24,10 +25,11 @@ module PivotTable
       @rows = []
       @data_grid.each_with_index do |data, index|
         @rows << Row.new(
-          :header     => row_headers[index],
-          :data       => data,
-          :value_name => value_name,
-          :orthogonal_headers => column_headers
+          :header             => row_headers[index],
+          :data               => data,
+          :value_name         => value_name,
+          :orthogonal_headers => column_headers,
+          :access_method      => access_method
         )
       end
     end
@@ -36,10 +38,11 @@ module PivotTable
       @columns = []
       @data_grid.transpose.each_with_index do |data, index|
         @columns << Column.new(
-          :header           => column_headers[index],
-          :data             => data,
-          :value_name       => value_name,
-          :orthogonal_headers => row_headers
+          :header             => column_headers[index],
+          :data               => data,
+          :value_name         => value_name,
+          :orthogonal_headers => row_headers,
+          :access_method      => access_method
         )
       end
     end
@@ -73,13 +76,14 @@ module PivotTable
     end
 
     def populate_grid
+      determine_access_method
       prepare_grid
       row_headers.each_with_index do |row, row_index|
         current_row = []
         column_headers.each_with_index do |col, col_index|
-          object = @source_data.find { |item| item.send(row_name) == row && item.send(column_name) == col }
+          object = @source_data.find { |item| access_record(item, row_name) == row && access_record(item, column_name) == col }
           has_field_name = field_name && object.respond_to?(field_name)
-          current_row[col_index] = has_field_name ? object.send(field_name) : object
+          current_row[col_index] = has_field_name ? access_record(object, field_name) : object
         end
         @data_grid[row_index] = current_row
       end
@@ -88,9 +92,10 @@ module PivotTable
 
     private
 
-    def headers(method)
-      hdrs = @source_data.collect { |c| c.send method }.uniq
+    def headers(key)
+      hdrs = @source_data.collect { |c| access_record(c, key) }.uniq
       configuration.sort ? hdrs.sort : hdrs
     end
+
   end
 end
