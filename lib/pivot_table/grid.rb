@@ -82,8 +82,7 @@ module PivotTable
         current_row = []
         column_headers.each_with_index do |col, col_index|
           object = @source_data.find { |item| access_record(item, row_name) == row && access_record(item, column_name) == col }
-          has_field_name = field_name && object.respond_to?(field_name)
-          current_row[col_index] = has_field_name ? access_record(object, field_name) : object
+          current_row[col_index] = field_name ? access_record(object, field_name) : object
         end
         @data_grid[row_index] = current_row
       end

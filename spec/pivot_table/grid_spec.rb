@@ -153,7 +153,7 @@ module PivotTable
 
         let(:build_result) { instance.build }
         subject { build_result.data_grid }
-        it { should == [[d1, d2, d3], [d4, d5, d6]] }
+        it { should == [[nil, nil, nil], [nil, nil, nil]] }
       end
     end
   end
