@@ -68,11 +68,7 @@ module PivotTable
     end
 
     def prepare_grid
-      @data_grid = []
-      row_headers.count.times do
-        @data_grid << column_headers.count.times.inject([]) { |col| col << nil }
-      end
-      @data_grid
+      @data_grid = Array.new(row_headers.size) { Array.new(column_headers.size) }
     end
 
     def populate_grid
