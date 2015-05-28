@@ -74,14 +74,16 @@ module PivotTable
     def populate_grid
       determine_access_method
       prepare_grid
-      row_headers.each_with_index do |row, row_index|
-        current_row = []
-        column_headers.each_with_index do |col, col_index|
-          object = @source_data.find { |item| access_record(item, row_name) == row && access_record(item, column_name) == col }
-          current_row[col_index] = field_name ? access_record(object, field_name) : object
-        end
-        @data_grid[row_index] = current_row
+
+      row_header_indices = index_map(row_headers)
+      column_header_indices = index_map(column_headers)
+
+      @source_data.each do |item|
+        row_index = row_header_indices[access_record(item, row_name)]
+        column_index = column_header_indices[access_record(item, column_name)]
+        @data_grid[row_index][column_index] = field_name ? access_record(item, field_name) : item
       end
+
       @data_grid
     end
 
@@ -90,6 +92,15 @@ module PivotTable
     def headers(key)
       hdrs = @source_data.collect { |c| access_record(c, key) }.uniq
       configuration.sort ? hdrs.sort : hdrs
+    end
+
+    # Returns a mapping from array item to array index (for quick lookups
+    # instead of using Array#index). Only works for arrays that have unique
+    # item sets.
+    def index_map(array)
+      map = {}
+      array.each_with_index { |array_item, index| map[array_item] = index }
+      map
     end
 
   end
